@@ -29,45 +29,29 @@ function addTwoNumbers(
   l1: ListNode | null,
   l2: ListNode | null
 ): ListNode | null {
-  let firstDepth: Item[] = [];
-  let secondDepth: Item[] = [];
-
-  // Menangani node pertama sebelum loop
-  if (l1) firstDepth.push({ val: l1.val, depth: 1 });
-  if (l2) secondDepth.push({ val: l2.val, depth: 1 });
-
-  while (l1?.next) {
-    l1 = l1.next;
-    firstDepth.push({
-      val: l1.val,
-      depth: firstDepth[firstDepth.length - 1].depth * 10,
-    });
-  }
-
-  while (l2?.next) {
-    l2 = l2.next;
-    secondDepth.push({
-      val: l2.val,
-      depth: secondDepth[secondDepth.length - 1].depth * 10,
-    });
-  }
-
-  let firstTotal = firstDepth.reduce(
-    (sum, item) => sum + item.val * item.depth,
-    0
-  );
-  let secondTotal = secondDepth.reduce(
-    (sum, item) => sum + item.val * item.depth,
-    0
-  );
-
-  let total = firstTotal + secondTotal;
-  let totalStr = total.toString();
-  let totalArr = totalStr.split("").map((item) => Number(item));
-
   let result: ListNode | null = null;
-  for (let i = 0; i < totalArr.length; i++) {
-    result = new ListNode(totalArr[i], result);
+  let carry = 0;
+  let iterator_result;
+
+  while (l1 !== null || l2 !== null) {
+    let temp1 = l1?.val ? l1?.val : 0;
+    let temp2 = l2?.val ? l2?.val : 0;
+    let sum = temp1 + temp2 + carry;
+    carry = Math.floor(Number(sum / 10));
+    if (result == null) {
+      result = new ListNode(sum % 10, null);
+      iterator_result = result;
+    }
+    else if (iterator_result.next == null) {
+      iterator_result.next = new ListNode(sum % 10, null);
+      iterator_result = iterator_result.next
+    }
+    
+    l1 = l1?.next ? l1?.next : null;
+    l2 = l2?.next ? l2?.next : null;
+  }
+  if (carry != 0) {
+    iterator_result.next = new ListNode(carry, null);
   }
 
   return result;
@@ -76,9 +60,17 @@ function addTwoNumbers(
 // case 1
 // const input = new ListNode(2, new ListNode(4, new ListNode(3)));
 // const input2 = new ListNode(5, new ListNode(6, new ListNode(4)));
+// const input = new ListNode(0);
+// const input2 = new ListNode(0,new ListNode(1));
 
 // case 2
-const input = new ListNode(0);
-const input2 = new ListNode(1);
+let current
+let input = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1].map((item) =>{
+  current = new ListNode(item, current);
+  return current
+});
+// const input = new ListNode(0);
+const input2 = new ListNode(5, new ListNode(6, new ListNode(4)));
 
-console.log(addTwoNumbers(input, input2));
+console.log(addTwoNumbers(current, input2));
+// console.log(addTwoNumbers(input, input2));
